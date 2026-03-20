@@ -4,6 +4,12 @@ import com.mojang.serialization.MapCodec;
 import com.yoruthewiz.pastureextractor.block.entity.ExtractorBlockEntity;
 import com.yoruthewiz.pastureextractor.block.entity.ModBlockEntities;
 import net.minecraft.core.BlockPos;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
@@ -13,6 +19,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
@@ -45,6 +52,28 @@ public class ExtractorBlock extends BaseEntityBlock {
     @Override
     public @Nullable BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
         return new ExtractorBlockEntity(blockPos, blockState);
+    }
+
+    @Override
+    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+        if (state.getBlock() != newState.getBlock())
+            if (level.getBlockEntity(pos) instanceof ExtractorBlockEntity be) {
+                be.drops();
+                level.updateNeighbourForOutputSignal(pos, this);
+            }
+        super.onRemove(state, level, pos, newState, movedByPiston);
+    }
+
+    @Override
+    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+        if (level.getBlockEntity(pos) instanceof ExtractorBlockEntity be) {
+            if (!be.inventory.getStackInSlot(0).isEmpty()) {
+                ItemStack stackInSlot = be.inventory.extractItem(0, 1, false);
+                player.getInventory().add(stackInSlot);
+                level.playSound(player, pos, SoundEvents.ITEM_PICKUP, SoundSource.BLOCKS, 1f, 2f);
+            }
+        }
+        return ItemInteractionResult.SUCCESS;
     }
 
     @Override

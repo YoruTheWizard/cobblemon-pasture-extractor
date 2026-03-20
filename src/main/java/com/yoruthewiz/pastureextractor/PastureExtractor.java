@@ -20,9 +20,14 @@ import org.slf4j.LoggerFactory;
 @Mod(PastureExtractor.MOD_ID)
 public class PastureExtractor {
     public static final String MOD_ID = "pastureextractor";
-    private static final Logger LOGGER = LoggerFactory.getLogger(PastureExtractor.class);
+    public static final Logger LOGGER = LoggerFactory.getLogger(PastureExtractor.class);
+    public static PastureExtractor instance;
+    private final Config config;
 
     public PastureExtractor(IEventBus modEventBus, ModContainer modContainer) {
+        instance = this;
+        config = Config.load();
+
         modEventBus.addListener(this::commonSetup);
         NeoForge.EVENT_BUS.register(this);
 
@@ -34,6 +39,10 @@ public class PastureExtractor {
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {}
+
+    public Config getConfig() {
+        return config;
+    }
 
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event) {}
