@@ -10,7 +10,7 @@ displayName = "${mod_name}"
 #updateJSONURL=""
 #displayURL=""
 #logoFile=""
-credits="TimInc (original mod's author)"
+credits="TimInc (Cobblemon Pasture Collector mod's author)"
 authors = "${mod_authors}"
 description = '''
 ${mod_description}
@@ -31,4 +31,11 @@ modId = "minecraft"
 type = "required"
 versionRange = "${minecraft_version_range}"
 ordering = "NONE"
+side = "BOTH"
+
+[[dependencies."${mod_id}"]]
+modId = "cobblemon"
+type = "required"
+versionRange = "${cobblemon_version_range}"
+ordering = "AFTER"
 side = "BOTH"

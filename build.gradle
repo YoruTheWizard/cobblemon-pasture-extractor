@@ -10,6 +10,12 @@ group = mod_group_id
 
 repositories {
     mavenLocal()
+    mavenCentral()
+    maven { url = "https://hub.spigotmc.org/nexus/content/groups/public/" }
+    maven { url = "https://maven.neoforged.net/releases/" }
+    maven { url = "https://thedarkcolour.github.io/KotlinForForge/" }
+    maven { url = "https://artefacts.cobblemon.com/releases/" }
+
 }
 
 base {
@@ -65,21 +71,31 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 
 dependencies {
-
+    implementation "com.cobblemon:neoforge:${property("cobblemon_version")}"
+    runtimeOnly "com.cobblemon:neoforge:${property("cobblemon_version")}"
+    implementation "thedarkcolour:kotlinforforge-neoforge:${property("kotlin_version")}"
+    runtimeOnly "thedarkcolour:kotlinforforge-neoforge:${property("kotlin_version")}"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:${property("kotlin_version")}"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${property("kotlin_version")}"
 }
 
 var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {
-    var replaceProperties = [minecraft_version      : minecraft_version,
-                             minecraft_version_range: minecraft_version_range,
-                             neo_version            : neo_version,
-                             neo_version_range      : neo_version_range,
-                             loader_version_range   : loader_version_range,
-                             mod_id                 : mod_id,
-                             mod_name               : mod_name,
-                             mod_license            : mod_license,
-                             mod_version            : mod_version,
-                             mod_authors            : mod_authors,
-                             mod_description        : mod_description]
+    var replaceProperties = [
+            minecraft_version      : minecraft_version,
+            minecraft_version_range: minecraft_version_range,
+            neo_version            : neo_version,
+            neo_version_range      : neo_version_range,
+            loader_version_range   : loader_version_range,
+            mod_id                 : mod_id,
+            mod_name               : mod_name,
+            mod_license            : mod_license,
+            mod_version            : mod_version,
+            mod_authors            : mod_authors,
+            mod_description        : mod_description,
+            cobblemon_version      : cobblemon_version,
+            cobblemon_version_range: cobblemon_version_range,
+            kotlin_version         : kotlin_version,
+    ]
     inputs.properties replaceProperties
     expand replaceProperties
     from "src/main/templates"

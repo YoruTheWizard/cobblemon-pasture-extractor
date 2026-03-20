@@ -1,5 +1,9 @@
 package com.yoruthewiz.pastureextractor;
 
+import com.yoruthewiz.pastureextractor.block.ModBlocks;
+import com.yoruthewiz.pastureextractor.block.entity.ModBlockEntities;
+import com.yoruthewiz.pastureextractor.item.ModCreativeModeTabs;
+import com.yoruthewiz.pastureextractor.item.ModItems;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -21,6 +25,12 @@ public class PastureExtractor {
     public PastureExtractor(IEventBus modEventBus, ModContainer modContainer) {
         modEventBus.addListener(this::commonSetup);
         NeoForge.EVENT_BUS.register(this);
+
+        ModCreativeModeTabs.register(modEventBus);
+
+        ModItems.register(modEventBus);
+        ModBlocks.register(modEventBus);
+        ModBlockEntities.register(modEventBus);
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {}
