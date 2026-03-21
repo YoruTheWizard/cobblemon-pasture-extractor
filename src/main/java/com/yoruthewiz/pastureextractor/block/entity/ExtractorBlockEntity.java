@@ -123,8 +123,11 @@ public class ExtractorBlockEntity extends BlockEntity {
         Pokemon pokemon = tethering.get(level.random.nextInt(tethering.size())).getPokemon();
         if (pokemon == null) return;
 
-        float happiness = pokemon.getFriendship() / 255.0F;
-        float chance = getConfig().getBaseDropChance() * (0.5F + 0.5F * happiness);
+        float chance = getConfig().getBaseDropChance();
+        if (!getConfig().ignoreFriendship()) {
+            float happiness = pokemon.getFriendship() / 255.0F;
+            chance *= (0.5F + 0.5F * happiness);
+        }
 
         if (level.random.nextFloat() > chance) {
             LOGGER.debug("Drop roll failed. Chance: {}.", chance);

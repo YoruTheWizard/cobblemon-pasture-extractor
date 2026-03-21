@@ -16,17 +16,20 @@ public class Config {
     private int cooldown;
     private float baseDropChance;
     private String[] itemBlacklist;
+    private boolean ignoreFriendship;
 
     private Config() {
         this.cooldown = Defaults.COOLDOWN;
         this.baseDropChance = Defaults.BASE_DROP_CHANCE;
         this.itemBlacklist = Defaults.ITEM_BLACKLIST;
+        this.ignoreFriendship = Defaults.IGNORE_FRIENDSHIP;
     }
 
     public static class Defaults {
         public static final int COOLDOWN = 200;
         public static final float BASE_DROP_CHANCE = 0.15f;
         public static final String[] ITEM_BLACKLIST = {};
+        public static final boolean IGNORE_FRIENDSHIP = true;
     }
 
     public int getCooldown() {
@@ -41,6 +44,10 @@ public class Config {
         return itemBlacklist;
     }
 
+    public boolean ignoreFriendship() {
+        return ignoreFriendship;
+    }
+
     public static Config load() {
         Config config = new Config();
         try (FileReader reader = new FileReader(CONFIG_FILE)) {
@@ -48,6 +55,7 @@ public class Config {
             config.cooldown = json.get("cooldown").getAsInt();
             config.baseDropChance = json.get("dropChance").getAsFloat();
             config.itemBlacklist = GSON.fromJson(json.get("itemBlacklist"), String[].class);
+            config.ignoreFriendship = json.get("ignoreFriendship").getAsBoolean();
         } catch (IOException e) {
             config = new Config();
             config.save();
@@ -60,6 +68,7 @@ public class Config {
         json.addProperty("cooldown", cooldown);
         json.addProperty("dropChance", baseDropChance);
         json.add("itemBlacklist", GSON.toJsonTree(itemBlacklist));
+        json.addProperty("ignoreFriendship", ignoreFriendship);
 
         try (FileWriter writer = new FileWriter(CONFIG_FILE)) {
             GSON.toJson(json, writer);
