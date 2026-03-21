@@ -1,6 +1,7 @@
 package com.yoruthewiz.pastureextractor;
 
 import com.yoruthewiz.pastureextractor.block.ModBlocks;
+import com.yoruthewiz.pastureextractor.block.entity.ExtractorBlockEntity;
 import com.yoruthewiz.pastureextractor.block.entity.ModBlockEntities;
 import com.yoruthewiz.pastureextractor.item.ModCreativeModeTabs;
 import com.yoruthewiz.pastureextractor.item.ModItems;
@@ -12,6 +13,8 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import org.slf4j.Logger;
@@ -51,5 +54,14 @@ public class PastureExtractor {
     public static class ClientModEvents {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {}
+
+        @SubscribeEvent
+        public static void registerCapabilities(RegisterCapabilitiesEvent event) {
+            event.registerBlockEntity(
+                    Capabilities.ItemHandler.BLOCK,
+                    ModBlockEntities.EXTRACTOR_BE.get(),
+                    ExtractorBlockEntity::getInventory
+            );
+        }
     }
 }
