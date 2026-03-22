@@ -17,10 +17,12 @@ public class ModCreativeModeTabs {
 
     public static final Supplier<CreativeModeTab> PASTURE_EXTRACTOR_TAB =
             CREATIVE_MODE_TAB.register("pasture_extractor_tab", () -> CreativeModeTab.builder()
-                .icon(() -> new ItemStack(ModBlocks.EXTRACTOR))
+                .icon(() -> new ItemStack(ModBlocks.EXTRACTOR_IRON))
                 .title(Component.translatable("creativetab.pastureextractor.pasture_extractor_tab"))
                 .displayItems(((itemDisplayParameters, output) -> {
-                    output.accept(ModBlocks.EXTRACTOR);
+                    output.accept(ModBlocks.EXTRACTOR_IRON);
+                    output.accept(ModBlocks.EXTRACTOR_GOLD);
+                    output.accept(ModBlocks.EXTRACTOR_DIAMOND);
                 })).build());
 
     public static void register(IEventBus eventBus) {

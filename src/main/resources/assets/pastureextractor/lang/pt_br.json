@@ -1,4 +1,6 @@
 {
-  "block.pastureextractor.extractor": "Extrator de Pasto",
+  "block.pastureextractor.extractor_iron": "Extrator de Pasto de Ferro",
+  "block.pastureextractor.extractor_gold": "Extrator de Pasto de Ouro",
+  "block.pastureextractor.extractor_diamond": "Extrator de Pasto de Diamante",
   "creativetab.pastureextractor.pasture_extractor_tab": "Pasture Extractor"
 }

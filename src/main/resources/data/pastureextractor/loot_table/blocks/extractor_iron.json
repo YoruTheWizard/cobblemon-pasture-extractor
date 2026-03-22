@@ -6,7 +6,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "pastureextractor:extractor"
+          "name": "pastureextractor:extractor_iron"
         }
       ],
       "conditions": [

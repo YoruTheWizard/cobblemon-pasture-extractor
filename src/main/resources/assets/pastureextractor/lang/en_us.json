@@ -1,4 +1,6 @@
 {
-  "block.pastureextractor.extractor": "Pasture Extractor",
+  "block.pastureextractor.extractor_iron": "Iron Pasture Extractor",
+  "block.pastureextractor.extractor_gold": "Gold Pasture Extractor",
+  "block.pastureextractor.extractor_diamond": "Diamond Pasture Extractor",
   "creativetab.pastureextractor.pasture_extractor_tab": "Pasture Extractor"
 }

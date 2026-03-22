@@ -8,6 +8,7 @@ import com.cobblemon.mod.common.pokemon.FormData;
 import com.cobblemon.mod.common.pokemon.Pokemon;
 import com.yoruthewiz.pastureextractor.Config;
 import com.yoruthewiz.pastureextractor.PastureExtractor;
+import com.yoruthewiz.pastureextractor.tier.ExtractorTier;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -23,6 +24,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemStackHandler;
@@ -32,25 +34,28 @@ import org.slf4j.Logger;
 import java.util.Arrays;
 import java.util.List;
 
-public class ExtractorBlockEntity extends BlockEntity {
-    public final ItemStackHandler inventory = new ItemStackHandler(1) {
-        @Override
-        protected int getStackLimit(int slot, ItemStack stack) {
-            return 1;
-        }
-
-        @Override
-        protected void onContentsChanged(int slot) {
-            setChanged();
-            if (!level.isClientSide) {
-                level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
-            }
-        }
-    };
+public abstract class AbstractExtractorBlockEntity extends BlockEntity {
+    private final ExtractorTier tier;
+    public final ItemStackHandler inventory;
     private static final Logger LOGGER = PastureExtractor.LOGGER;
 
-    public ExtractorBlockEntity(BlockPos pos, BlockState blockState) {
-        super(ModBlockEntities.EXTRACTOR_BE.get(), pos, blockState);
+    public AbstractExtractorBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState blockState, ExtractorTier tier) {
+        super(type, pos, blockState);
+        this.tier = tier;
+        this.inventory = new ItemStackHandler(tier.getInventorySize()) {
+            @Override
+            protected int getStackLimit(int slot, ItemStack stack) {
+                return 1;
+            }
+
+            @Override
+            protected void onContentsChanged(int slot) {
+                setChanged();
+                if (!level.isClientSide) {
+                    level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
+                }
+            }
+        };
     }
 
     private static Config getConfig() {
@@ -62,14 +67,14 @@ public class ExtractorBlockEntity extends BlockEntity {
     }
 
     public void clearContents() {
-        inventory.setStackInSlot(0, ItemStack.EMPTY);
+        for (int i = 0; i < inventory.getSlots(); i++)
+            inventory.setStackInSlot(0, ItemStack.EMPTY);
     }
 
     public void drops() {
         SimpleContainer container = new SimpleContainer(inventory.getSlots());
-        for (int i = 0; i < inventory.getSlots(); i++) {
+        for (int i = 0; i < inventory.getSlots(); i++)
             container.setItem(i, inventory.getStackInSlot(i));
-        }
         Containers.dropContents(this.level, this.worldPosition, container);
     }
 
@@ -95,7 +100,7 @@ public class ExtractorBlockEntity extends BlockEntity {
         return saveWithoutMetadata(registries);
     }
 
-    public void tick(Level level, BlockPos blockPos, BlockState blockState, ExtractorBlockEntity extractorBlockEntity) {
+    public void tick(Level level, BlockPos blockPos, BlockState blockState, AbstractExtractorBlockEntity extractorBlockEntity) {
         if (level.isClientSide) return;
         if (level.getGameTime() % getConfig().getCooldown() == 0) extractorBlockEntity.tryGenerateItem();
     }
@@ -122,22 +127,24 @@ public class ExtractorBlockEntity extends BlockEntity {
 
         Pokemon pokemon = tethering.get(level.random.nextInt(tethering.size())).getPokemon();
         if (pokemon == null) return;
+        LOGGER.debug("Chosen pokemon: {}.", pokemon.getSpecies().getName());
 
-        float chance = getConfig().getBaseDropChance();
-        if (!getConfig().ignoreFriendship()) {
-            float happiness = pokemon.getFriendship() / 255.0F;
-            chance *= (0.5F + 0.5F * happiness);
-        }
+        float chance = tier.getBaseChance();
+        if (!getConfig().ignoreFriendship())
+            chance *= (0.5F + 0.5F * (pokemon.getFriendship() / 255F));
+        LOGGER.debug("Chance: {}", chance);
 
         if (level.random.nextFloat() > chance) {
-            LOGGER.debug("Drop roll failed. Chance: {}.", chance);
+            LOGGER.debug("Drop roll failed.");
             return;
         }
 
         ItemStack result = rollLoot(serverLevel, pokemon);
-        if (result.isEmpty()) return;
+        if (result.isEmpty()) {
+            LOGGER.debug("Could not get loot item.");
+            return;
+        }
 
-        result.setCount(1);
         insertItem(result);
         LOGGER.debug("Extracted loot item.");
     }
@@ -154,16 +161,24 @@ public class ExtractorBlockEntity extends BlockEntity {
         try {
             FormData form = pokemon.getForm();
             DropTable dropTable = form.getDrops();
-            List<DropEntry> drops = dropTable.getDrops(dropTable.getAmount(), pokemon);
+            List<DropEntry> drops = dropTable.getDrops(dropTable.getAmount(), pokemon); // Get pokemon's drop table
             if (drops.isEmpty()) return ItemStack.EMPTY;
 
-            DropEntry drop = drops.get(level.random.nextInt(drops.size()));
+            DropEntry drop = drops.get(level.random.nextInt(drops.size())); // Get random entry from drop table
             if (!(drop instanceof ItemDropEntry itemDropEntry)) return ItemStack.EMPTY;
-            if (Arrays.asList(getConfig().getItemBlacklist()).contains(itemDropEntry.getItem().toString())) return ItemStack.EMPTY;
+            if (Arrays.asList(getConfig().getItemBlacklist()).contains(itemDropEntry.getItem().toString())) return ItemStack.EMPTY; // Skip blacklisted items
 
             Item item = level.registryAccess().registryOrThrow(Registries.ITEM).get(itemDropEntry.getItem());
-            if (item == null || itemDropEntry.getQuantity() < 1) return ItemStack.EMPTY;
-            return new ItemStack(item, itemDropEntry.getQuantity());
+            if (item == null) return ItemStack.EMPTY;
+
+            if (!tier.isGetStack()) return new ItemStack(item); // Return only 1 item
+
+            int quantity = itemDropEntry.getQuantity();
+            if (itemDropEntry.getQuantityRange() != null)
+                quantity = (int) Math.round(Math.random() * (itemDropEntry.getQuantityRange().getLast()));
+            if (quantity < 1) return ItemStack.EMPTY;
+
+            return new ItemStack(item, quantity);
         } catch (Exception e) {
             LOGGER.error("Error rolling loot.", e);
             return ItemStack.EMPTY;

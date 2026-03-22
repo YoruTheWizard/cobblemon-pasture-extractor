@@ -1,7 +1,7 @@
 package com.yoruthewiz.pastureextractor;
 
 import com.yoruthewiz.pastureextractor.block.ModBlocks;
-import com.yoruthewiz.pastureextractor.block.entity.ExtractorBlockEntity;
+import com.yoruthewiz.pastureextractor.block.entity.AbstractExtractorBlockEntity;
 import com.yoruthewiz.pastureextractor.block.entity.ModBlockEntities;
 import com.yoruthewiz.pastureextractor.item.ModCreativeModeTabs;
 import com.yoruthewiz.pastureextractor.item.ModItems;
@@ -59,8 +59,18 @@ public class PastureExtractor {
         public static void registerCapabilities(RegisterCapabilitiesEvent event) {
             event.registerBlockEntity(
                     Capabilities.ItemHandler.BLOCK,
-                    ModBlockEntities.EXTRACTOR_BE.get(),
-                    ExtractorBlockEntity::getInventory
+                    ModBlockEntities.EXTRACTOR_IRON_BE.get(),
+                    AbstractExtractorBlockEntity::getInventory
+            );
+            event.registerBlockEntity(
+                    Capabilities.ItemHandler.BLOCK,
+                    ModBlockEntities.EXTRACTOR_GOLD_BE.get(),
+                    AbstractExtractorBlockEntity::getInventory
+            );
+            event.registerBlockEntity(
+                    Capabilities.ItemHandler.BLOCK,
+                    ModBlockEntities.EXTRACTOR_DIAMOND_BE.get(),
+                    AbstractExtractorBlockEntity::getInventory
             );
         }
     }
