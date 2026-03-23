@@ -9,6 +9,7 @@ import com.cobblemon.mod.common.pokemon.Pokemon;
 import com.yoruthewiz.pastureextractor.Config;
 import com.yoruthewiz.pastureextractor.PastureExtractor;
 import com.yoruthewiz.pastureextractor.tier.ExtractorTier;
+import com.yoruthewiz.pastureextractor.util.ExtractOnlyStackHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -35,14 +36,15 @@ import java.util.Arrays;
 import java.util.List;
 
 public abstract class AbstractExtractorBlockEntity extends BlockEntity {
-    private final ExtractorTier tier;
-    public final ItemStackHandler inventory;
     private static final Logger LOGGER = PastureExtractor.LOGGER;
+
+    private final ExtractorTier tier;
+    public final ExtractOnlyStackHandler inventory;
 
     public AbstractExtractorBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState blockState, ExtractorTier tier) {
         super(type, pos, blockState);
         this.tier = tier;
-        this.inventory = new ItemStackHandler(tier.getInventorySize()) {
+        this.inventory = new ExtractOnlyStackHandler(tier.getInventorySize()) {
             @Override
             protected int getStackLimit(int slot, ItemStack stack) {
                 return 1;
@@ -60,6 +62,10 @@ public abstract class AbstractExtractorBlockEntity extends BlockEntity {
 
     private static Config getConfig() {
         return PastureExtractor.instance.getConfig();
+    }
+
+    public ItemStackHandler getInventory() {
+        return inventory;
     }
 
     public IItemHandler getInventory(@Nullable Direction side) {
@@ -88,16 +94,6 @@ public abstract class AbstractExtractorBlockEntity extends BlockEntity {
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         inventory.deserializeNBT(registries, tag.getCompound("inventory"));
-    }
-
-    @Override
-    public @Nullable Packet<ClientGamePacketListener> getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this);
-    }
-
-    @Override
-    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
-        return saveWithoutMetadata(registries);
     }
 
     public void tick(Level level, BlockPos blockPos, BlockState blockState, AbstractExtractorBlockEntity extractorBlockEntity) {
@@ -187,7 +183,8 @@ public abstract class AbstractExtractorBlockEntity extends BlockEntity {
 
     private void insertItem(ItemStack stack) {
         for (int i = 0; i < inventory.getSlots(); i++) {
-            stack = inventory.insertItem(i, stack, false);
+            stack = inventory.forceInsert(i, stack);
+            setChanged();
             if (stack.isEmpty()) break;
         }
     }
@@ -197,5 +194,15 @@ public abstract class AbstractExtractorBlockEntity extends BlockEntity {
             if (inventory.getStackInSlot(i).isEmpty()) return true;
         }
         return false;
+    }
+
+    @Override
+    public @Nullable Packet<ClientGamePacketListener> getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this);
+    }
+
+    @Override
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+        return saveWithoutMetadata(registries);
     }
 }
