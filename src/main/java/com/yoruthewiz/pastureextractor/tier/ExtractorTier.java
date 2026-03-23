@@ -2,8 +2,8 @@ package com.yoruthewiz.pastureextractor.tier;
 
 public enum ExtractorTier {
     IRON(1, 0.15F, false),
-    GOLD(3, 0.3F, false),
-    DIAMOND(5, 0.5F, false);
+    GOLD(3, 0.3F, true),
+    DIAMOND(5, 0.5F, true);
 
     public final int inventorySize;
     public final float baseChance;
