@@ -27,6 +27,7 @@ public class ExtractOnlyStackHandler extends ItemStackHandler {
 
             int toInsert = Math.min(space, stack.getCount());
             existing.grow(toInsert);
+            onContentsChanged(slot);
 
             ItemStack remainder = stack.copy();
             remainder.shrink(toInsert);

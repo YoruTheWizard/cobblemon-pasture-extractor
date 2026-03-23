@@ -20,6 +20,7 @@ import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Containers;
+import net.minecraft.world.MenuProvider;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -45,11 +46,6 @@ public abstract class AbstractExtractorBlockEntity extends BlockEntity {
         super(type, pos, blockState);
         this.tier = tier;
         this.inventory = new ExtractOnlyStackHandler(tier.getInventorySize()) {
-            @Override
-            protected int getStackLimit(int slot, ItemStack stack) {
-                return 1;
-            }
-
             @Override
             protected void onContentsChanged(int slot) {
                 setChanged();
@@ -96,6 +92,14 @@ public abstract class AbstractExtractorBlockEntity extends BlockEntity {
         inventory.deserializeNBT(registries, tag.getCompound("inventory"));
     }
 
+    @Override
+    public void setChanged() {
+        super.setChanged();
+        if (level instanceof ServerLevel serverLevel) {
+            serverLevel.getChunkSource().blockChanged(worldPosition);
+        }
+    }
+
     public void tick(Level level, BlockPos blockPos, BlockState blockState, AbstractExtractorBlockEntity extractorBlockEntity) {
         if (level.isClientSide) return;
         if (level.getGameTime() % getConfig().getCooldown() == 0) extractorBlockEntity.tryGenerateItem();
@@ -104,7 +108,7 @@ public abstract class AbstractExtractorBlockEntity extends BlockEntity {
     private void tryGenerateItem() {
         if (!(level instanceof ServerLevel serverLevel)) return;
         LOGGER.debug("Trying to generate item");
-        if (!isInventoryEmpty()) {
+        if (isInventoryFull()) {
             LOGGER.warn("Inventory is full");
             return;
         }
@@ -189,11 +193,12 @@ public abstract class AbstractExtractorBlockEntity extends BlockEntity {
         }
     }
 
-    private boolean isInventoryEmpty() {
+    private boolean isInventoryFull() {
         for (int i = 0; i < inventory.getSlots(); i++) {
-            if (inventory.getStackInSlot(i).isEmpty()) return true;
+            if (!inventory.getStackInSlot(i).isEmpty())
+                return false;
         }
-        return false;
+        return true;
     }
 
     @Override
