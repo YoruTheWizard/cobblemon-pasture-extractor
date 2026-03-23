@@ -5,6 +5,10 @@ import com.yoruthewiz.pastureextractor.block.entity.AbstractExtractorBlockEntity
 import com.yoruthewiz.pastureextractor.block.entity.ModBlockEntities;
 import com.yoruthewiz.pastureextractor.item.ModCreativeModeTabs;
 import com.yoruthewiz.pastureextractor.item.ModItems;
+import com.yoruthewiz.pastureextractor.screen.ExtractorDiamondScreen;
+import com.yoruthewiz.pastureextractor.screen.ExtractorGoldScreen;
+import com.yoruthewiz.pastureextractor.screen.ExtractorIronScreen;
+import com.yoruthewiz.pastureextractor.screen.ModMenuTypes;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -15,6 +19,7 @@ import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import org.slf4j.Logger;
@@ -39,6 +44,8 @@ public class PastureExtractor {
         ModItems.register(modEventBus);
         ModBlocks.register(modEventBus);
         ModBlockEntities.register(modEventBus);
+
+        ModMenuTypes.register(modEventBus);
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {}
@@ -72,6 +79,13 @@ public class PastureExtractor {
                     ModBlockEntities.EXTRACTOR_DIAMOND_BE.get(),
                     AbstractExtractorBlockEntity::getInventory
             );
+        }
+
+        @SubscribeEvent
+        public static void registerScreens(RegisterMenuScreensEvent event) {
+            event.register(ModMenuTypes.EXTRACTOR_IRON_MENU.get(), ExtractorIronScreen::new);
+            event.register(ModMenuTypes.EXTRACTOR_GOLD_MENU.get(), ExtractorGoldScreen::new);
+            event.register(ModMenuTypes.EXTRACTOR_DIAMOND_MENU.get(), ExtractorDiamondScreen::new);
         }
     }
 }

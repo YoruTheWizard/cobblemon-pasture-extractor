@@ -1,0 +1,24 @@
+package com.yoruthewiz.pastureextractor.screen;
+
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.yoruthewiz.pastureextractor.PastureExtractor;
+import com.yoruthewiz.pastureextractor.screen.menu.ExtractorGoldMenu;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Inventory;
+
+public class ExtractorGoldScreen extends AbstractExtractorScreen<ExtractorGoldMenu> {
+    private static final ResourceLocation GUI_TEXTURE =
+            ResourceLocation.fromNamespaceAndPath(PastureExtractor.MOD_ID, "textures/gui/extractor/extractor_gold_gui.png");
+
+    public ExtractorGoldScreen(ExtractorGoldMenu menu, Inventory playerInventory, Component title) {
+        super(menu, playerInventory, title);
+    }
+
+    @Override
+    protected void renderBg(GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
+        super.renderBg(guiGraphics, partialTick, mouseX, mouseY, GUI_TEXTURE);
+    }
+}

@@ -2,10 +2,13 @@ package com.yoruthewiz.pastureextractor.block;
 
 import com.yoruthewiz.pastureextractor.block.entity.AbstractExtractorBlockEntity;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
@@ -48,7 +51,11 @@ public abstract class AbstractExtractorBlock extends BaseEntityBlock {
 
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
-        if (level.getBlockEntity(pos) instanceof AbstractExtractorBlockEntity be)
+        if (level.getBlockEntity(pos) instanceof AbstractExtractorBlockEntity be) {
+            if (player.isCrouching() && !level.isClientSide) {
+                ((ServerPlayer) player).openMenu(new SimpleMenuProvider(be, be.getDisplayName()), pos);
+                return ItemInteractionResult.SUCCESS;
+            }
             for (int i = 0; i < be.inventory.getSlots(); i++) {
                 ItemStack stackInSlot = be.inventory.getStackInSlot(i);
                 if (stackInSlot.isEmpty()) continue;
@@ -58,6 +65,7 @@ public abstract class AbstractExtractorBlock extends BaseEntityBlock {
                 level.playSound(player, pos, SoundEvents.ITEM_PICKUP, SoundSource.BLOCKS, 1f, 2f);
                 break;
             }
+        }
         return ItemInteractionResult.SUCCESS;
     }
 }
