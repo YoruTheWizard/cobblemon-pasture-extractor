@@ -14,7 +14,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
@@ -40,7 +39,6 @@ import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
-import java.util.Arrays;
 import java.util.List;
 
 public abstract class AbstractExtractorBlockEntity extends BlockEntity implements MenuProvider {
@@ -108,8 +106,8 @@ public abstract class AbstractExtractorBlockEntity extends BlockEntity implement
         Pokemon pokemon = tethering.get(level.random.nextInt(tethering.size())).getPokemon();
         if (pokemon == null) return;
 
-        float chance = tier.getBaseChance();
-        if (!getConfig().ignoreFriendship())
+        float chance = getConfig().getTierChance(tier.getName());
+        if (!getConfig().isIgnoreFriendship())
             chance *= (0.5F + 0.5F * (pokemon.getFriendship() / 255F));
 
         if (level.random.nextFloat() > chance) {
@@ -144,7 +142,7 @@ public abstract class AbstractExtractorBlockEntity extends BlockEntity implement
 
             DropEntry drop = drops.get(level.random.nextInt(drops.size())); // Get random entry from drop table
             if (!(drop instanceof ItemDropEntry itemDropEntry)) return ItemStack.EMPTY;
-            if (Arrays.asList(getConfig().getItemBlacklist()).contains(itemDropEntry.getItem().toString())) return ItemStack.EMPTY; // Skip blacklisted items
+            if (getConfig().isBlacklisted(itemDropEntry.getItem().toString())) return ItemStack.EMPTY; // Skip blacklisted items
 
             Item item = level.registryAccess().registryOrThrow(Registries.ITEM).get(itemDropEntry.getItem());
             if (item == null) return ItemStack.EMPTY;
