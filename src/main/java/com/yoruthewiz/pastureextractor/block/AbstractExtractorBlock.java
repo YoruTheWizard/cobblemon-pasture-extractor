@@ -55,15 +55,16 @@ public abstract class AbstractExtractorBlock extends BaseEntityBlock {
             if (player.isCrouching() && !level.isClientSide) {
                 ((ServerPlayer) player).openMenu(new SimpleMenuProvider(be, be.getDisplayName()), pos);
                 return ItemInteractionResult.SUCCESS;
-            }
-            for (int i = 0; i < be.inventory.getSlots(); i++) {
-                ItemStack stackInSlot = be.inventory.getStackInSlot(i);
-                if (stackInSlot.isEmpty()) continue;
+            } else if (!player.isCrouching()) {
+                for (int i = 0; i < be.inventory.getSlots(); i++) {
+                    ItemStack stackInSlot = be.inventory.getStackInSlot(i);
+                    if (stackInSlot.isEmpty()) continue;
 
-                stackInSlot = be.inventory.extractItem(i, stackInSlot.getCount(), false);
-                player.getInventory().add(stackInSlot);
-                level.playSound(player, pos, SoundEvents.ITEM_PICKUP, SoundSource.BLOCKS, 1f, 2f);
-                break;
+                    stackInSlot = be.inventory.extractItem(i, stackInSlot.getCount(), false);
+                    player.getInventory().add(stackInSlot);
+                    level.playSound(player, pos, SoundEvents.ITEM_PICKUP, SoundSource.BLOCKS, 1f, 2f);
+                    break;
+                }
             }
         }
         return ItemInteractionResult.SUCCESS;
