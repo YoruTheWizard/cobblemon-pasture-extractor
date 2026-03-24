@@ -39,7 +39,7 @@ public class Config {
         }
         public static final int COOLDOWN = 200;
         public static final String[] ITEM_BLACKLIST = {};
-        public static final boolean IGNORE_FRIENDSHIP = true;
+        public static final boolean IGNORE_FRIENDSHIP = false;
     }
 
     public float getTierChance(String tier) {
