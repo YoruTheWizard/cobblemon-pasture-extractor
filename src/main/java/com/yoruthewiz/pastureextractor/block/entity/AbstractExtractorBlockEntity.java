@@ -13,6 +13,9 @@ import com.yoruthewiz.pastureextractor.util.ExtractOnlyStackHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleType;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -91,46 +94,37 @@ public abstract class AbstractExtractorBlockEntity extends BlockEntity implement
 
     private void tryGenerateItem() {
         if (!(level instanceof ServerLevel serverLevel)) return;
-        LOGGER.debug("Trying to generate item");
         if (isInventoryFull()) {
-            LOGGER.warn("Inventory is full");
+            sendParticles(ParticleTypes.SMALL_FLAME);
             return;
         }
 
         PokemonPastureBlockEntity pasture = findPastureBlock();
-        if (pasture == null) {
-            LOGGER.warn("There is no pasture block nearby.");
-            return;
-        }
+        if (pasture == null) return;
 
         List<PokemonPastureBlockEntity.Tethering> tethering = pasture.getTetheredPokemon();
-        if (tethering.isEmpty()) {
-            LOGGER.warn("There is no pokemon in pasture.");
-            return;
-        }
+        if (tethering.isEmpty()) return;
 
         Pokemon pokemon = tethering.get(level.random.nextInt(tethering.size())).getPokemon();
         if (pokemon == null) return;
-        LOGGER.debug("Chosen pokemon: {}.", pokemon.getSpecies().getName());
 
         float chance = tier.getBaseChance();
         if (!getConfig().ignoreFriendship())
             chance *= (0.5F + 0.5F * (pokemon.getFriendship() / 255F));
-        LOGGER.debug("Chance: {}", chance);
 
         if (level.random.nextFloat() > chance) {
-            LOGGER.debug("Drop roll failed.");
+            sendParticles(ParticleTypes.SMOKE);
             return;
         }
 
         ItemStack result = rollLoot(serverLevel, pokemon);
         if (result.isEmpty()) {
-            LOGGER.debug("Could not get loot item.");
+            sendParticles(ParticleTypes.SMOKE);
             return;
         }
 
         insertItem(result);
-        LOGGER.debug("Extracted loot item.");
+        sendParticles(ParticleTypes.COMPOSTER);
     }
 
     private PokemonPastureBlockEntity findPastureBlock() {
@@ -183,6 +177,15 @@ public abstract class AbstractExtractorBlockEntity extends BlockEntity implement
                 return false;
         }
         return true;
+    }
+
+    private void sendParticles(ParticleOptions type) {
+        if (level instanceof ServerLevel serverLevel) {
+            serverLevel.sendParticles(type,
+                    worldPosition.getCenter().x, worldPosition.getCenter().y + 0.65, worldPosition.getCenter().z,
+                    3, 0.0, 0.0, 0.0, 0
+            );
+        }
     }
 
     @Override
