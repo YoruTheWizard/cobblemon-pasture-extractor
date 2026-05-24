@@ -102,6 +102,11 @@ public abstract class AbstractExtractorBlockEntity extends BlockEntity implement
         if (pastureBlocks.isEmpty()) return;
         PokemonPastureBlockEntity pasture = pastureBlocks.get(level.random.nextInt(pastureBlocks.size()));
 
+        if (!isActiveExtractor(pasture)) {
+            sendParticles(ParticleTypes.ANGRY_VILLAGER, 1);
+            return;
+        }
+
         List<PokemonPastureBlockEntity.Tethering> tethering = pasture.getTetheredPokemon();
         if (tethering.isEmpty()) return;
 
@@ -135,6 +140,30 @@ public abstract class AbstractExtractorBlockEntity extends BlockEntity implement
             if (be instanceof PokemonPastureBlockEntity pasture) pastureBlocks.add(pasture);
         }
         return pastureBlocks;
+    }
+
+    private boolean isActiveExtractor(PokemonPastureBlockEntity pasture) {
+        AbstractExtractorBlockEntity bestExtractor = null;
+        for (Direction dir : Direction.values()) {
+            BlockEntity be = level.getBlockEntity(pasture.getBlockPos().relative(dir));
+            if (!(be instanceof AbstractExtractorBlockEntity extractor))
+                continue;
+            if (bestExtractor == null || isBetterExtractor(extractor, bestExtractor))
+                bestExtractor = extractor;
+        }
+        return bestExtractor == this;
+    }
+
+    private boolean isBetterExtractor(AbstractExtractorBlockEntity current, AbstractExtractorBlockEntity best) {
+        if (current.tier.ordinal() > best.tier.ordinal()) return true;
+        if (current.tier.ordinal() < best.tier.ordinal()) return false;
+        return comparePositions(current.getBlockPos(), best.getBlockPos()) < 0;
+    }
+
+    private int comparePositions(BlockPos a, BlockPos b) {
+        if (a.getZ() != b.getZ())
+            return Integer.compare(a.getZ(), b.getZ());
+        return Integer.compare(a.getX(), b.getX());
     }
 
     private ItemStack rollLoot(ServerLevel level, Pokemon pokemon) {
@@ -186,6 +215,15 @@ public abstract class AbstractExtractorBlockEntity extends BlockEntity implement
             serverLevel.sendParticles(type,
                     worldPosition.getCenter().x, worldPosition.getCenter().y + 0.65, worldPosition.getCenter().z,
                     3, 0.0, 0.0, 0.0, 0
+            );
+        }
+    }
+
+    private void sendParticles(ParticleOptions type, int count) {
+        if (level instanceof ServerLevel serverLevel) {
+            serverLevel.sendParticles(type,
+                    worldPosition.getCenter().x, worldPosition.getCenter().y + 0.65, worldPosition.getCenter().z,
+                    count, 0.0, 0.0, 0.0, 0
             );
         }
     }
