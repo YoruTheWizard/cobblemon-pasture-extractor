@@ -39,6 +39,7 @@ import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public abstract class AbstractExtractorBlockEntity extends BlockEntity implements MenuProvider {
@@ -97,8 +98,9 @@ public abstract class AbstractExtractorBlockEntity extends BlockEntity implement
             return;
         }
 
-        PokemonPastureBlockEntity pasture = findPastureBlock();
-        if (pasture == null) return;
+        List<PokemonPastureBlockEntity> pastureBlocks = findPastureBlocks();
+        if (pastureBlocks.isEmpty()) return;
+        PokemonPastureBlockEntity pasture = pastureBlocks.get(level.random.nextInt(pastureBlocks.size()));
 
         List<PokemonPastureBlockEntity.Tethering> tethering = pasture.getTetheredPokemon();
         if (tethering.isEmpty()) return;
@@ -125,12 +127,14 @@ public abstract class AbstractExtractorBlockEntity extends BlockEntity implement
         sendParticles(ParticleTypes.COMPOSTER);
     }
 
-    private PokemonPastureBlockEntity findPastureBlock() {
+    private List<PokemonPastureBlockEntity> findPastureBlocks() {
+        List<PokemonPastureBlockEntity> pastureBlocks = new ArrayList<>();
         for (Direction dir : Direction.values()) {
+            if (dir == Direction.UP || dir == Direction.DOWN) continue;
             BlockEntity be = level.getBlockEntity(worldPosition.relative(dir));
-            if (be instanceof PokemonPastureBlockEntity pasture) return pasture;
+            if (be instanceof PokemonPastureBlockEntity pasture) pastureBlocks.add(pasture);
         }
-        return null;
+        return pastureBlocks;
     }
 
     private ItemStack rollLoot(ServerLevel level, Pokemon pokemon) {
