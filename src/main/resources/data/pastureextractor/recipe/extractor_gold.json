@@ -2,18 +2,18 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "pattern": [
-    "AAA",
-    "ABA",
-    "ACA"
+    " G ",
+    "GEG",
+    " B "
   ],
   "key": {
-    "A": {
+    "G": {
       "item": "minecraft:gold_ingot"
     },
-    "B": {
+    "E": {
       "item": "pastureextractor:extractor_iron"
     },
-    "C": {
+    "B": {
       "item": "minecraft:gold_block"
     }
   },

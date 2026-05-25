@@ -2,22 +2,25 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "pattern": [
-    "ABA",
-    "ACA",
-    "ADA"
+    "PEP",
+    "IBI",
+    "PRP"
   ],
   "key": {
-    "A": {
+    "P": {
+      "tag": "minecraft:planks"
+    },
+    "E": {
+      "item": "minecraft:ender_pearl"
+    },
+    "I": {
       "item": "minecraft:iron_ingot"
     },
     "B": {
-      "item": "minecraft:ender_pearl"
+      "item": "minecraft:barrel"
     },
-    "C": {
-      "item": "minecraft:composter"
-    },
-    "D": {
-      "item": "minecraft:stone"
+    "R": {
+      "item": "minecraft:iron_block"
     }
   },
   "result": {

@@ -2,18 +2,18 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "pattern": [
-    "AAA",
-    "ABA",
-    "ACA"
+    " D ",
+    "DED",
+    " B "
   ],
   "key": {
-    "A": {
+    "D": {
       "item": "minecraft:diamond"
     },
-    "B": {
+    "E": {
       "item": "pastureextractor:extractor_gold"
     },
-    "C": {
+    "B": {
       "item": "minecraft:diamond_block"
     }
   },
