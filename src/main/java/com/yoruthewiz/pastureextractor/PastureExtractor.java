@@ -3,6 +3,7 @@ package com.yoruthewiz.pastureextractor;
 import com.yoruthewiz.pastureextractor.block.ModBlocks;
 import com.yoruthewiz.pastureextractor.block.entity.AbstractExtractorBlockEntity;
 import com.yoruthewiz.pastureextractor.block.entity.ModBlockEntities;
+import com.yoruthewiz.pastureextractor.capability.ModCapabilities;
 import com.yoruthewiz.pastureextractor.item.ModCreativeModeTabs;
 import com.yoruthewiz.pastureextractor.item.ModItems;
 import com.yoruthewiz.pastureextractor.screen.ExtractorDiamondScreen;
@@ -44,6 +45,8 @@ public class PastureExtractor {
         ModItems.register(modEventBus);
         ModBlocks.register(modEventBus);
         ModBlockEntities.register(modEventBus);
+
+        modEventBus.register(ModCapabilities.class);
 
         ModMenuTypes.register(modEventBus);
     }
