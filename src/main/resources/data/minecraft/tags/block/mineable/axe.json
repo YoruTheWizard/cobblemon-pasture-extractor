@@ -3,6 +3,7 @@
   "values": [
     "pastureextractor:extractor_iron",
     "pastureextractor:extractor_gold",
-    "pastureextractor:extractor_diamond"
+    "pastureextractor:extractor_diamond",
+    "pastureextractor:extractor_netherite"
   ]
 }

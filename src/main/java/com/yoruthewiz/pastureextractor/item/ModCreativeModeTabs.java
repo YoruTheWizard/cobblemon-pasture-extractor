@@ -23,6 +23,7 @@ public class ModCreativeModeTabs {
                     output.accept(ModBlocks.EXTRACTOR_IRON);
                     output.accept(ModBlocks.EXTRACTOR_GOLD);
                     output.accept(ModBlocks.EXTRACTOR_DIAMOND);
+                    output.accept(ModBlocks.EXTRACTOR_NETNERITE);
                 })).build());
 
     public static void register(IEventBus eventBus) {

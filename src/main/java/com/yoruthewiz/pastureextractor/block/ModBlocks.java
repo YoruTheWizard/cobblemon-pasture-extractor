@@ -12,6 +12,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
+import java.util.Objects;
 import java.util.function.Supplier;
 
 public class ModBlocks {
@@ -33,6 +34,13 @@ public class ModBlocks {
             () -> new ExtractorDiamondBlock(BlockBehaviour.Properties
                     .ofFullCopy(Blocks.BARREL)));
 
+    public static final DeferredBlock<Block> EXTRACTOR_NETNERITE = registerBlock(
+            "extractor_netherite",
+            () -> new ExtractorNetheriteBlock(
+                    BlockBehaviour.Properties
+                            .ofFullCopy(Blocks.BARREL)
+                            .strength(10.0F, 1200.0F)));
+
     /* METHODS */
     private static <T extends Block> DeferredBlock<T> registerBlock(String name, Supplier<T> block) {
         DeferredBlock<T> toReturn = BLOCKS.register(name, block);
@@ -41,6 +49,10 @@ public class ModBlocks {
     }
 
     private static <T extends Block> void registerBlockItem(String name, DeferredBlock<T> block) {
+        if (Objects.equals(name, "extractor_netherite")) {
+            ModItems.ITEMS.register(name, () -> new BlockItem(block.get(), new Item.Properties().fireResistant()));
+            return;
+        }
         ModItems.ITEMS.register(name, () -> new BlockItem(block.get(), new Item.Properties()));
     }
 

@@ -36,6 +36,7 @@ public class Config {
             TIER_CHANCES.put("iron", 0.15F);
             TIER_CHANCES.put("gold", 0.3F);
             TIER_CHANCES.put("diamond", 0.5F);
+            TIER_CHANCES.put("netherite", 0.5F);
         }
         public static final int COOLDOWN = 200;
         public static final String[] ITEM_BLACKLIST = {};

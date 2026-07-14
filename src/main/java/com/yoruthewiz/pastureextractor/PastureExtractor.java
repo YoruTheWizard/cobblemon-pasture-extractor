@@ -6,10 +6,7 @@ import com.yoruthewiz.pastureextractor.block.entity.ModBlockEntities;
 import com.yoruthewiz.pastureextractor.capability.ModCapabilities;
 import com.yoruthewiz.pastureextractor.item.ModCreativeModeTabs;
 import com.yoruthewiz.pastureextractor.item.ModItems;
-import com.yoruthewiz.pastureextractor.screen.ExtractorDiamondScreen;
-import com.yoruthewiz.pastureextractor.screen.ExtractorGoldScreen;
-import com.yoruthewiz.pastureextractor.screen.ExtractorIronScreen;
-import com.yoruthewiz.pastureextractor.screen.ModMenuTypes;
+import com.yoruthewiz.pastureextractor.screen.*;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -82,6 +79,11 @@ public class PastureExtractor {
                     ModBlockEntities.EXTRACTOR_DIAMOND_BE.get(),
                     AbstractExtractorBlockEntity::getInventory
             );
+            event.registerBlockEntity(
+                    Capabilities.ItemHandler.BLOCK,
+                    ModBlockEntities.EXTRACTOR_NETHERITE_BE.get(),
+                    AbstractExtractorBlockEntity::getInventory
+            );
         }
 
         @SubscribeEvent
@@ -89,6 +91,7 @@ public class PastureExtractor {
             event.register(ModMenuTypes.EXTRACTOR_IRON_MENU.get(), ExtractorIronScreen::new);
             event.register(ModMenuTypes.EXTRACTOR_GOLD_MENU.get(), ExtractorGoldScreen::new);
             event.register(ModMenuTypes.EXTRACTOR_DIAMOND_MENU.get(), ExtractorDiamondScreen::new);
+            event.register(ModMenuTypes.EXTRACTOR_NETHERITE_MENU.get(), ExtractorNetheriteScreen::new);
         }
     }
 }

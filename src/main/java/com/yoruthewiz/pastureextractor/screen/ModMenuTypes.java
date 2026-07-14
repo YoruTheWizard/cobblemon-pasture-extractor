@@ -4,6 +4,7 @@ import com.yoruthewiz.pastureextractor.PastureExtractor;
 import com.yoruthewiz.pastureextractor.screen.menu.ExtractorDiamondMenu;
 import com.yoruthewiz.pastureextractor.screen.menu.ExtractorGoldMenu;
 import com.yoruthewiz.pastureextractor.screen.menu.ExtractorIronMenu;
+import com.yoruthewiz.pastureextractor.screen.menu.ExtractorNetheriteMenu;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
@@ -23,13 +24,14 @@ public class ModMenuTypes {
     public static final DeferredHolder<MenuType<?>, MenuType<ExtractorIronMenu>> EXTRACTOR_IRON_MENU =
             registerMenu("extractor_iron_menu", ExtractorIronMenu::new);
 
-
     public static final DeferredHolder<MenuType<?>, MenuType<ExtractorGoldMenu>> EXTRACTOR_GOLD_MENU =
             registerMenu("extractor_gold_menu", ExtractorGoldMenu::new);
 
-
     public static final DeferredHolder<MenuType<?>, MenuType<ExtractorDiamondMenu>> EXTRACTOR_DIAMOND_MENU =
             registerMenu("extractor_diamond_menu", ExtractorDiamondMenu::new);
+
+    public static final DeferredHolder<MenuType<?>, MenuType<ExtractorNetheriteMenu>> EXTRACTOR_NETHERITE_MENU =
+            registerMenu("extractor_netherite_menu", ExtractorNetheriteMenu::new);
 
     public static void register(IEventBus bus) {
         MENUS.register(bus);

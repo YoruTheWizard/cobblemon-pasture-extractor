@@ -23,5 +23,10 @@ public class ModCapabilities {
                 ModBlockEntities.EXTRACTOR_DIAMOND_BE.get(),
                 (be, side) -> be.getInventory()
         );
+        event.registerBlockEntity(
+                Capabilities.ItemHandler.BLOCK,
+                ModBlockEntities.EXTRACTOR_NETHERITE_BE.get(),
+                (be, side) -> be.getInventory()
+        );
     }
 }

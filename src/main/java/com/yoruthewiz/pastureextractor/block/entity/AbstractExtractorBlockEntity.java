@@ -114,7 +114,7 @@ public abstract class AbstractExtractorBlockEntity extends BlockEntity implement
         if (pokemon == null) return;
 
         float chance = getConfig().getTierChance(tier.getName());
-        if (!getConfig().isIgnoreFriendship())
+        if (!getConfig().isIgnoreFriendship() && !tier.isIgnoreFriendship())
             chance *= (0.5F + 0.5F * (pokemon.getFriendship() / 255F));
 
         if (level.random.nextFloat() > chance) {

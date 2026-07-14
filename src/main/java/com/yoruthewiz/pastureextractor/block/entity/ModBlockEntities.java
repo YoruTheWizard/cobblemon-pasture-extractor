@@ -1,6 +1,7 @@
 package com.yoruthewiz.pastureextractor.block.entity;
 
 import com.yoruthewiz.pastureextractor.PastureExtractor;
+import com.yoruthewiz.pastureextractor.block.ExtractorNetheriteBlock;
 import com.yoruthewiz.pastureextractor.block.ModBlocks;
 import com.yoruthewiz.pastureextractor.tier.ExtractorTier;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -30,6 +31,12 @@ public class ModBlockEntities {
             BLOCK_ENTITIES.register("extractor_diamond_be", () -> BlockEntityType.Builder.of(
                     ExtractorDiamondBlockEntity::new,
                     ModBlocks.EXTRACTOR_DIAMOND.get()
+            ).build(null));
+
+    public static final Supplier<BlockEntityType<ExtractorNetheriteBlockEntity>> EXTRACTOR_NETHERITE_BE =
+            BLOCK_ENTITIES.register("extractor_netherite_be", () -> BlockEntityType.Builder.of(
+                    ExtractorNetheriteBlockEntity::new,
+                    ModBlocks.EXTRACTOR_NETNERITE.get()
             ).build(null));
 
     public static void register(IEventBus eventBus) {
