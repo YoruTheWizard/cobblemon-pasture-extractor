@@ -5,7 +5,7 @@ Collects items from Pokémon in nearby Pasture Blocks in Cobblemon.
 This mod was inspired by [Cobblemon Pasture Collector](https://github.com/timinc-cobble/cobblemon-pasturecollector-1.6-fabric/tree/main) Mod by TimInc.
 
 ## Features
-There are currently three tiers of Pasture Extractors: **Iron**, **Gold** and **Diamond**, each with different inventory size and probability of extracting items (configurable).
+There are currently four tiers of Pasture Extractors: **Iron**, **Gold**, **Diamond** and **Netherite**, each with different inventory size and probability of extracting items (configurable).
 The Extractors will *randomly* choose a Pokémon inside an adjacent Pasture Block and take a *random* item from its drop table (cooldown is configurable).
 - The Extractor must be *directly adjacent* to a Pasture Block for it to work (top and bottom excluded);
 - If more than one Pasture block is adjacent to an Extractor, it *randomly* chooses *one* of them;
@@ -14,6 +14,7 @@ The Extractors will *randomly* choose a Pokémon inside an adjacent Pasture Bloc
     **North** > **West** > **East** > **South**.
 
 Possible drops are the same players would get if the Pokémon were defeated in battle, and probability scales with Pokémon's friendship level (less friendship, less chance) (also configurable).
+- Netherite Extractors are essentially the same as Diamond Extractors, but they ignore the Pokémon friendship
 
 Each cycle, the Extractors can emit particles:
 - **Broken heart**: Higher priority Extractor at the same Pasture Block;
